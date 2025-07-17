@@ -34,6 +34,7 @@
         <div class="form-footer">
           <p>还没有账号？ <router-link to="/register">立即注册</router-link></p>
         </div>
+        <div>徐子维测试块</div>
       </form>
     </div>
   </div>
