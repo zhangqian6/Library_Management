@@ -1,8 +1,12 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session, send_file
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models import db, User, Book
 from werkzeug.security import generate_password_hash
 import re
+from io import BytesIO
+import random
+import string
+from PIL import Image, ImageDraw, ImageFont
 
 api = Blueprint('api', __name__)
 
@@ -216,3 +220,21 @@ def del_books(book_ids):
             continue # 忽略无效的ID
     db.session.commit()
     return jsonify({'message': f'成功删除{deleted_count}本图书'})
+
+@api.route("/get_captcha", methods = ['GET'])
+def get_captcha():
+    # 生成随机验证码文本
+    code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    session['captcha'] = code  # 存储以供验证
+
+    # 使用 PIL 生成验证码图片
+    image = Image.new('RGB', (100, 40), (255, 255, 255))
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default()
+    draw.text((10, 10), code, font=font, fill=(0, 0, 0))
+
+    # 返回图片
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    buffer.seek(0)
+    return send_file(buffer, mimetype='image/png')

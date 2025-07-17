@@ -24,6 +24,11 @@
             placeholder="请输入密码"
           />
         </div>
+
+        <div class="captcha-container">
+          <input type="text" id="captcha-input" placeholder="请输入验证码" />
+          <img id="captcha-img" :src="captchaUrl" alt="验证码" title="点击更换" @click="refreshCaptcha"/>
+        </div>
         
         <div class="form-actions">
           <button type="submit" :disabled="loading" class="btn-primary">
@@ -46,6 +51,7 @@ import { login } from '../api/auth'
 
 const router = useRouter()
 const loading = ref(false)
+const captchaUrl = ref('/api/get_captcha')
 
 const form = reactive({
   username: '',
@@ -70,6 +76,10 @@ const handleLogin = async () => {
   } finally {
     loading.value = false
   }
+}
+
+function refreshCaptcha() {
+  captchaUrl.value = `/api/get_captcha?${Date.now()}`
 }
 </script>
 

@@ -8,6 +8,7 @@
         <li v-bind:class="{active: currentView === 'UserManage'}" @click="currentView = 'UserManage'">用户管理</li>
         <li v-bind:class="{active: currentView === 'LendRecord'}" @click="currentView = 'LendRecord'">借阅管理</li>
       </ul>
+      <button @click="logout">退出登录</button>
     </aside>
 
     <main class="main-content">
@@ -26,6 +27,7 @@ import Home from '../views/Home.vue'
 import UserManage from '../views/UserManage.vue'
 import BookManage from '../views/BookManage.vue'
 import LendRecord from '../views/LendRecord.vue'
+import router from '@/router';
 
 // 当前视图标识
 const currentView = ref('DashBoard')
@@ -49,6 +51,7 @@ const currentComponent = computed(() => {
 
 
 const logout = () => {
+  localStorage.removeItem('token'); // 清除token
   router.push('/Login');
 }
 
