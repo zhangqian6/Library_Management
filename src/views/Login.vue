@@ -35,7 +35,6 @@
             {{ loading ? '登录中...' : '登录' }}
           </button>
         </div>
-        <div>再改一次</div>
         <div class="form-footer">
           <p>还没有账号？ <router-link to="/register">立即注册</router-link></p>
         </div>
@@ -188,5 +187,10 @@ function refreshCaptcha() {
 
 .form-footer a:hover {
   text-decoration: underline;
+}
+
+.captcha-container {
+  display: flex;
+  align-items: center;
 }
 </style> 

@@ -52,6 +52,35 @@
 
 import random
 import string
+from PIL import Image, ImageDraw, ImageFont
+from flask import session, send_file
+from io import BytesIO
 
-code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-print(code)
+code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+
+# 使用 PIL 生成验证码图片
+image = Image.new('RGB', (100, 40), (255, 255, 255))
+
+draw = ImageDraw.Draw(image)
+font = ImageFont.load_default()
+
+# 获取文本大小
+text_bbox = draw.textbbox((10, 10), code, font=font)
+text_width = text_bbox[2] - text_bbox[0]
+text_height = text_bbox[3] - text_bbox[1]
+
+# 获取图像大小
+image_width, image_height = image.size
+print(text_width, text_height, image_width, image_height)
+
+# 计算居中位置
+x = (image_width - text_width) // 2
+y = (image_height - text_height) // 2
+
+draw.text((x, y), code, font=font, fill=(0, 0, 0))
+image.save("captcha.png")
+
+# # 返回图片
+# buffer = BytesIO()
+# image.save(buffer, format="PNG")
+# buffer.seek(0)

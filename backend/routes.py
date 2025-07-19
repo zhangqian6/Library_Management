@@ -231,7 +231,17 @@ def get_captcha():
     image = Image.new('RGB', (100, 40), (255, 255, 255))
     draw = ImageDraw.Draw(image)
     font = ImageFont.load_default()
-    draw.text((10, 10), code, font=font, fill=(0, 0, 0))
+
+    # 获取文本大小
+    text_bbox = draw.textbbox((10, 10), code, font=font)
+    text_width = text_bbox[2] - text_bbox[0]
+    text_height = text_bbox[3] - text_bbox[1]
+
+    image_width, image_height = image.size
+    x = (image_width - text_width) // 2
+    y = (image_height - text_height) // 2
+
+    draw.text((x, y), code, fill=(0, 0, 0), font=font)
 
     # 返回图片
     buffer = BytesIO()
