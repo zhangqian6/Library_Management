@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 创建axios实例
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // Flask后端API地址
+  baseURL: 'http://localhost:5000/api', // Flask后端API地址
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
