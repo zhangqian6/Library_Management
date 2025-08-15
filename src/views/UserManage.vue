@@ -6,24 +6,24 @@
                 v-model="dialogVisible"
                 title="添加读者"
             >
-                <el-form :model="form" label-width="auto">
-                    <el-form-item label="读者编号" prop="id">
-                        <el-input v-model="form.id" placeholder="请输入读者编号" />
+                <el-form :model="form" ref="formRef" label-width="auto">
+                    <el-form-item label="读者编号" prop="number">
+                        <el-input v-model="form.number" placeholder="请输入读者编号" />
                     </el-form-item>
-                    <el-form-item label="用户名" prop="id">
-                        <el-input v-model="form.id" placeholder="请输入用户名" />
+                    <el-form-item label="用户名" prop="user">
+                        <el-input v-model="form.user" placeholder="请输入用户名" />
                     </el-form-item>
-                    <el-form-item label="姓名" prop="id">
-                        <el-input v-model="form.id" placeholder="请输入姓名" />
+                    <el-form-item label="姓名" prop="name">
+                        <el-input v-model="form.name" placeholder="请输入姓名" />
                     </el-form-item>
-                    <el-form-item label="电话号码" prop="id">
-                        <el-input v-model="form.id" placeholder="请输入电话号码" />
+                    <el-form-item label="电话号码" prop="phone_number">
+                        <el-input v-model="form.phone_number" placeholder="请输入电话号码" />
                     </el-form-item>
-                    <el-form-item label="性别" prop="id">
-                        <el-input v-model="form.id" placeholder="请输入性别" />
+                    <el-form-item label="性别" prop="gender">
+                        <el-input v-model="form.gender" placeholder="请输入性别" />
                     </el-form-item>
-                    <el-form-item label="地址" prop="id">
-                        <el-input v-model="form.id" placeholder="请输入地址" />
+                    <el-form-item label="地址" prop="address">
+                        <el-input v-model="form.address" placeholder="请输入地址" />
                     </el-form-item>
                 </el-form>
                 <template #footer>
@@ -33,12 +33,12 @@
             </el-dialog>
             <el-button type="danger" @click="batchDelete">批量删除</el-button>
         </div>
-        <el-table :data="[]" border style="width: 100%">
-            <el-table-column prop="id" label="读者编号" />
-            <el-table-column prop="name" label="用户名" />
-            <el-table-column prop="email" label="姓名" />
-            <el-table-column prop="role" label="电话号码" />
-            <el-table-column prop="status" label="性别" />
+        <el-table v-bind:data="data0" border style="width: 100%">
+            <el-table-column prop="number" label="读者编号" />
+            <el-table-column prop="user" label="用户名" />
+            <el-table-column prop="name" label="姓名" />
+            <el-table-column prop="phone_number" label="电话号码" />
+            <el-table-column prop="gender" label="性别" />
             <el-table-column prop="address" label="地址" />
             <el-table-column prop="action" label="操作">
                 <template #default="scope">
@@ -61,8 +61,22 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 
+onMounted(() => {
+    axios.get('http://localhost:5000/api/reader')
+        .then(response => {
+            data0.value = response.data;
+        })
+        .catch(err => {
+            ElMessage.error('获取读者信息失败');
+            console.error(err);
+        });
+})
+const data0 = ref([]);
+const formRef = ref()
+
 const form = ref({
-    id: '',
+    id: null,
+    number: '',
     user: '',
     name: '',
     phone_number: '',
@@ -73,11 +87,39 @@ const dialogVisible = ref(false);
 
 
 function submitForm(){
-    console.log("添加读者功能尚未实现");
+    formRef.value.validate((valid) => {
+        if (valid) {
+            axios.post('http://localhost:5000/api/reader', form.value)
+            .then(response => {
+                ElMessage.success('添加成功');
+                data0.value.push(response.data);
+                dialogVisible.value = false;
+                resetForm()
+            })
+            .catch(err => {
+                ElMessage.error('添加失败')
+                console.error(err)
+            })
+
+        } else {
+            ElMessage.error('请填写完整信息');
+        }
+    });
 }
 function batchDelete() {
     // 这里可以添加批量删除的逻辑
     console.log("批量删除功能尚未实现");
+}
+
+function resetForm(){
+    form.value = {
+        id: null,
+        user: '',
+        name: '',
+        phone_number: '',
+        gender: '',
+        address: ''
+    }
 }
 </script>
 <style scoped>

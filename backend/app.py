@@ -13,12 +13,13 @@ def create_app():
     db.init_app(app)
     bcrypt.init_app(app)
     jwt = JWTManager(app)
-    
-    # 配置CORS
-    CORS(app, origins=app.config['CORS_ORIGINS'], supports_credentials=True)
-    
+
+    # 只给这个蓝图的路由加 CORS
+    CORS(api, resources={r"/*": {"origins": app.config['CORS_ORIGINS']}}, supports_credentials=True)
+
     # 注册蓝图
     app.register_blueprint(api, url_prefix='/api')
+
     
     # 创建数据库表
     with app.app_context():

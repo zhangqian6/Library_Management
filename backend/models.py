@@ -36,6 +36,7 @@ class User(db.Model):
         return f'<User {self.username}>' 
     
 class Book(db.Model):
+    __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.String(100), nullable=False)
     title = db.Column(db.String(100), nullable=False)
@@ -44,3 +45,14 @@ class Book(db.Model):
     publish = db.Column(db.String(100), nullable=False)
     publishDate = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(20), default='未借阅')
+
+
+class Reader(db.Model):
+    __tablename__ = 'reader'
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.String(100), nullable=False)
+    user = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=False)
+    gender = db.Column(db.String(10), nullable=False)
+    address = db.Column(db.String(100), nullable=False)

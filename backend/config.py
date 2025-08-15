@@ -12,7 +12,7 @@ class Config:
     # 数据库配置
     SQLALCHEMY_DATABASE_URI = (
         f"mysql+pymysql://{os.environ.get('DB_USER', 'root')}:"
-        f"{os.environ.get('DB_PASSWORD', 'your-mysql-password')}@"
+        f"{os.environ.get('DB_PASSWORD', '123456')}@"
         f"{os.environ.get('DB_HOST', 'localhost')}:"
         f"{os.environ.get('DB_PORT', '3306')}/"
         f"{os.environ.get('DB_NAME', 'vue3_auth_db')}"
@@ -24,4 +24,4 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     
     # CORS配置
-    CORS_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:5173'] 
+    CORS_ORIGINS = ['*'] 

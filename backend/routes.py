@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, session, send_file
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from models import db, User, Book
+from models import db, User, Book, Reader
 from werkzeug.security import generate_password_hash
 import re
 from io import BytesIO
@@ -174,6 +174,16 @@ def book_to_dict(book):
         'status': book.status,
     }
 
+def reader_to_dict(reader):
+    return {
+        'id': reader.id,
+        'number': reader.number,
+        'user': reader.user,
+        'name': reader.name,
+        'phone_number': reader.phone_number,
+        'gender': reader.gender,
+        'address': reader.address,
+    }
 
 @api.route('/books', methods=['GET'])
 def get_books():
@@ -221,6 +231,27 @@ def del_books(book_ids):
     db.session.commit()
     return jsonify({'message': f'成功删除{deleted_count}本图书'})
 
+
+@api.route('/reader', methods=['POST'])
+def add_readers():
+    data = request.json
+    required_fields = ['number', 'user', 'name', 'phone_number', 'gender', 'address']
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({'message': f'{field}不能为空'}), 400
+    reader = Reader(**data)
+    db.session.add(reader)
+    db.session.commit()
+    return jsonify({
+        'id': reader.id,
+        **data
+    })
+
+@api.route('/reader', methods=['GET'])
+def get_readers():
+    readers = Reader.query.all()
+    return jsonify([reader_to_dict(b) for b in readers])
+
 @api.route("/get_captcha", methods = ['GET'])
 def get_captcha():
     # 生成随机验证码文本
@@ -248,3 +279,18 @@ def get_captcha():
     image.save(buffer, format="PNG")
     buffer.seek(0)
     return send_file(buffer, mimetype='image/png')
+
+# @api.route("/user", methods = ['POST'])
+# def add_users():
+#     data = request.json
+#     required_fields = ['number', 'user', 'name', 'phone_number', 'gender', 'address']
+#     for field in required_fields:
+#         if not data.get(field):
+#             return jsonify({'message': f'{field}不能为空'}), 400
+#     user = User(**data)
+#     db.session.add(user)
+#     db.session.commit()
+#     return jsonify({
+#         'id': user.id,
+#         **data
+#     })
